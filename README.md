@@ -48,7 +48,7 @@ The structure of my NoSQL Firestore database is as follows:
 To use the Firestore API within Python, I used pip to install the `firebase-admin` module with this command:
 
 ```powershell
-python -m pip install --upgrade firebase-admin
+python -m pip install --upgrade "firebase-admin"
 ```
 
 I then needed to create a Firestore database from the Google Cloud Firebase website and generate an API
