@@ -9,6 +9,7 @@ from google.cloud.firestore import (
     FieldFilter,
 )
 from typing import Generator
+from datetime import date
 
 # Globals
 CRED = firebase_admin.credentials.Certificate(
@@ -72,13 +73,13 @@ def list_tasks(coll: str) -> None:
     print(f"\n{coll.capitalize()} Tasks:")
     docs: Generator[DocumentSnapshot] = DB.collection(coll).order_by("id").stream()
     print(f"| {'ID':<5} | {'Type':<15} | {'Text':<50} | {'Deadline':<25} |")
-    print(f"+-{'':-<5}-+-{'':-<50}-+-{'':-<25}-+")
+    print(f"+-{'':-<5}-+-{'':-<15}-+-{'':-<50}-+-{'':-<25}-+")
     for doc_snap in docs:
         doc_dict = doc_snap.to_dict()
         print(
-            f"| {f'{{{doc_dict[ID]}}}':<5} | {doc_dict[TYPE]:<15} | {doc_dict[TEXT]:<50} | {doc_dict.get(DEADLINE, '-'):<25} |"
+            f"| {f'{{{doc_dict[ID]}}}':<5} | {doc_dict[TYPE]:<15} | {doc_dict[TEXT]:<50} | {doc_dict[DEADLINE] if doc_dict.get(DEADLINE) else '-':<25} |"
         )
-        print(f"+-{'':-<5}-+-{'':<15}-+-{'':-<50}-+-{'':-<25}-+")
+        print(f"+-{'':-<5}-+-{'':-<15}-+-{'':-<50}-+-{'':-<25}-+")
     print()
 
 
@@ -136,10 +137,32 @@ def main() -> None:
 
             # Add an uncompleted task.
             case 2:
-                add_dict: dict
-                print("Enter task information:")
-                t_type = input("Task type:")
-                add_task()
+                print("Enter task information.")
+                t_type = input("Task type (Work, Personal, etc.):\n> ")
+                t_text = input("Task:\n> ")
+                try:
+                    t_deadline_date = date(
+                        *list(
+                            map(
+                                lambda x: int(x),
+                                input(
+                                    "Deadline date ('YYYY-MM-DD' | 'None'):\n> ",
+                                ).split("-"),
+                            )
+                        )
+                    )
+                    t_deadline = t_deadline_date.strftime("%b %d, %Y")
+                except ValueError as ve:
+                    t_deadline = None
+
+                add_task(
+                    UNCOMPLETED,
+                    {
+                        TYPE: t_type,
+                        TEXT: t_text,
+                        DEADLINE: t_deadline,
+                    },
+                )
 
             # Move a task from uncompleted collection to completed collection.
             case 3:
