@@ -17,7 +17,7 @@ My purpose for creating this software was to learn about NoSQL database structur
 easy-to-implement program such as this one. Google Firebase's Firestore database API uses NoSQL collection and document
 structure, so it was perfect for gaining a little bit of experience with NoSQL syntax.
 
-[Software Demo Video](http://youtu.be)
+[Task Tracker Using Firestore - Demo](https://youtu.be/5ToeDJayhyM)
 
 ## Cloud Database
 
