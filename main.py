@@ -35,7 +35,11 @@ COMP_ID = 0
 
 
 def menu() -> int:
-    """Display menu and return user command."""
+    """Display menu and return user command.
+
+    Returns:
+        `int` - The user's command choice.
+    """
 
     print("Menu:")
     print("  1. List all tasks")
@@ -47,7 +51,8 @@ def menu() -> int:
 
 
 def update_ids() -> None:
-    """Refresh the ids of all the documents in each collection. Used after
+    """
+    Refresh the ids of all the documents in each collection. Used after
     deleting a task to make sure every task has a unique, sequential id.
     """
 
@@ -68,7 +73,12 @@ def update_ids() -> None:
 
 
 def list_tasks(coll: str) -> None:
-    """"""
+    """
+    Print all the tasks from a collection.
+
+    Params:
+        `coll: str` - the name of the collection in the `tasks` firestore database.
+    """
 
     print(f"\n{coll.capitalize()} Tasks:")
     docs: Generator[DocumentSnapshot] = DB.collection(coll).order_by("id").stream()
@@ -76,27 +86,44 @@ def list_tasks(coll: str) -> None:
     print(f"+-{'':-<5}-+-{'':-<15}-+-{'':-<50}-+-{'':-<25}-+")
     for doc_snap in docs:
         doc_dict = doc_snap.to_dict()
-        print(
-            f"| {f'{{{doc_dict[ID]}}}':<5} | {doc_dict[TYPE]:<15} | {doc_dict[TEXT]:<50} | {doc_dict[DEADLINE] if doc_dict.get(DEADLINE) else '-':<25} |"
-        )
+        print(f"| {f'{{{doc_dict[ID]}}}':<5} ")
+        print(f"| {doc_dict[TYPE]:<15} ")
+        print(f"| {doc_dict[TEXT]:<50} ")
+        print(f"| {doc_dict[DEADLINE] if doc_dict.get(DEADLINE) else '-':<25} |")
         print(f"+-{'':-<5}-+-{'':-<15}-+-{'':-<50}-+-{'':-<25}-+")
     print()
 
 
 def complete_task(id: int) -> None:
-    """"""
+    """
+    Deletes a task document from the `uncompleted` collection and
+    adds it to the `completed` collection.
+
+    Params:
+        `id: int` - The id of the task document to move from `uncompleted`
+        to `completed`.
+    """
     add_task(COMPLETED, delete_task(UNCOMPLETED, id))
 
 
-def add_task(coll: str, task_dict) -> None:
-    """"""
+def add_task(coll: str, task_dict: dict) -> None:
+    """
+    Adds a dictionary as a document to the specified collection.
+
+    Params:
+        `coll: str` - The collection of the `tasks` database.
+        `task_dict: dict` - The dictionary of the task fields to add.
+    """
 
     global COMP_ID
     global UNCOMP_ID
 
     new_task_ref: DocumentReference
     _, new_task_ref = DB.collection(coll).add(task_dict)
-    new_task_ref.set({ID: UNCOMP_ID if coll == UNCOMPLETED else COMP_ID}, merge=True)
+    new_task_ref.set(
+        {ID: UNCOMP_ID if coll == UNCOMPLETED else COMP_ID},
+        merge=True,
+    )
     if coll == UNCOMPLETED:
         UNCOMP_ID += 1
     else:
@@ -104,20 +131,29 @@ def add_task(coll: str, task_dict) -> None:
 
 
 def delete_task(coll: str, id: int) -> dict:
-    """Delete a task by it's id from the specified collection."""
+    """
+    Delete a task by it's id from the specified collection.
 
-    remove_doc: dict
+    Params:
+        `coll: str` - The collection in the `tasks` firestore database.
+        `id: int` - The id of the task document to delete.
+
+    Returns:
+        `dict` - A dictionary comprised of the removed document fields.
+    """
+
+    remove_dict: dict
 
     docs: Generator[DocumentSnapshot] = (
         DB.collection(coll).where(filter=FieldFilter(ID, "==", id)).stream()
     )
     for doc in docs:
-        remove_doc = doc.to_dict()
+        remove_dict = doc.to_dict()
         doc_ref: DocumentReference = doc.reference
         doc_ref.delete()
     update_ids()
 
-    return remove_doc
+    return remove_dict
 
 
 def main() -> None:
@@ -191,6 +227,7 @@ def main() -> None:
                 except StopIteration:
                     print("INFO:\tNo completed tasks to delete.")
                     continue
+
                 delete_id: int
                 while True:
                     delete_id = int(input("ID of task to delete:\n> "))
