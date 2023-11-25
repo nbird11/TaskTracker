@@ -86,9 +86,9 @@ def list_tasks(coll: str) -> None:
     print(f"+-{'':-<5}-+-{'':-<15}-+-{'':-<50}-+-{'':-<25}-+")
     for doc_snap in docs:
         doc_dict = doc_snap.to_dict()
-        print(f"| {f'{{{doc_dict[ID]}}}':<5} ")
-        print(f"| {doc_dict[TYPE]:<15} ")
-        print(f"| {doc_dict[TEXT]:<50} ")
+        print(f"| {f'{{{doc_dict[ID]}}}':<5} ", end="")
+        print(f"| {doc_dict[TYPE]:<15} ", end="")
+        print(f"| {doc_dict[TEXT]:<50} ", end="")
         print(f"| {doc_dict[DEADLINE] if doc_dict.get(DEADLINE) else '-':<25} |")
         print(f"+-{'':-<5}-+-{'':-<15}-+-{'':-<50}-+-{'':-<25}-+")
     print()
