@@ -207,51 +207,6 @@ def main() -> None:
             case _:
                 print("ERROR:\tInvalid command.")
 
-    # docs: Generator[DocumentReference] = DB.collection(UNCOMPLETED).list_documents()
-    # doc: DocumentReference
-    # for doc in docs:
-    #     doc.delete()
-    # SERIALID = 0
-
-    # Add task
-    # add_task(
-    #     coll=UNCOMPLETED,
-    #     task_dict={
-    #         "type": TODO,
-    #         "text": "Wash laundry",
-    #     },
-    # )
-    # add_task(
-    #     coll=UNCOMPLETED,
-    #     task_dict={
-    #         "type": DEADLINE,
-    #         "text": "Internship approval form",
-    #         "do-by": "January",
-    #     },
-    # )
-
-    # Query
-    # query_ref: Query = DB.collection(TASKS).where(
-    #     filter=FieldFilter("type", "==", "deadline")
-    # )
-    # docs: Generator[DocumentSnapshot] = query_ref.stream()
-    # print("\nTODO:")
-    # doc: DocumentSnapshot
-    # for doc in docs:
-    #     print(f"{doc.id} => {doc.to_dict()}")
-    # print()
-
-    # Delete
-    # docs: Generator[DocumentSnapshot] = (
-    #     DB.collection(TASKS).where(filter=FieldFilter("id", "==", 2)).stream()
-    # )
-    # for doc_snap in docs:
-    #     doc_ref: DocumentReference = doc_snap.reference
-    #     doc_ref.delete()
-    # update_ids()
-
-    # list_tasks()
-
 
 if __name__ == "__main__":
     main()

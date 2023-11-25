@@ -1,0 +1,46 @@
+// Delete all
+docs: Generator[DocumentReference] = DB.collection(UNCOMPLETED).list_documents()
+doc: DocumentReference
+for doc in docs:
+    doc.delete()
+update_ids()
+
+// Add task
+add_task(
+    coll=UNCOMPLETED,
+    task_dict={
+        "type": "Personal",
+        "text": "Wash laundry",
+    },
+)
+add_task(
+    coll=UNCOMPLETED,
+    task_dict={
+        "type": "School",
+        "text": "Internship approval form",
+        "do-by": "January",
+    },
+)
+
+// Query
+query_ref: Query = DB.collection(UNCOMPLETED).where(
+    filter=FieldFilter("type", "==", "Personal")
+)
+docs: Generator[DocumentSnapshot] = query_ref.stream()
+print("\nPersonal tasks:")
+doc: DocumentSnapshot
+for doc in docs:
+    print(f"{doc.id} => {doc.to_dict()}")
+print()
+
+// Delete
+docs: Generator[DocumentSnapshot] = (
+    DB.collection(UNCOMPLETED).where(filter=FieldFilter("id", "==", 2)).stream()
+)
+for doc_snap in docs:
+    doc_ref: DocumentReference = doc_snap.reference
+    doc_ref.delete()
+update_ids()
+
+// Print all
+list_tasks()
